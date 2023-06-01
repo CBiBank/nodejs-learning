@@ -107,3 +107,187 @@ path.posix.delimiter
 path.win32.delimiter
 // Returns: ';'
 ```
+
+## path.dirname(path)
+
+`path.dirname` 方法返回一个路径的目录名，类似于 `Unix` 的 `dirname` 命令。
+
+```js
+path.dirname('/foo/bar/baz/asdf/quux')
+// Returns: '/foo/bar/baz/asdf'
+```
+
+## path.extname(path)
+
+`path.extname` 方法返回 `path` 的扩展名，从最后一次出现 `.`（句点）字符到 `path` 最后一部分的字符串结束。
+
+如果在 `path` 的最后一部分中没有 `.`，或者如果 `path` 的基本名称（参阅 `path.basename()`）的第一个字符是 `.`，则返回一个空字符串。
+
+```js
+path.extname('index.html')
+// Returns: '.html'
+
+path.extname('index.coffee.md')
+// Returns: '.md
+
+path.extname('index.')
+// Returns: '.'
+
+path.extname('index')
+// Returns: ''
+
+path.extname('.index')
+// Returns: ''
+
+path.extname('.index.md')
+// Returns: '.md'
+```
+
+## path.parse(path)
+
+`path.parse()` 方法返回一个对象，对象的属性表示 `path` 的元素。
+
+```js
+path.parse('/home/user/dir/file.txt')
+// Returns:
+// {
+//   root: '/',
+//   dir: '/home/user/dir',
+//   base: 'file.txt',
+//   ext: '.txt',
+//   name: 'file'
+// }
+```
+
+## path.format(pathObject)
+
+`path.format()` 方法从对象返回路径字符串。 与 `path.parse()` 相反。
+
+```js
+path.format({
+  root: '/',
+  dir: '/home/user/dir',
+  base: 'file.txt'
+})
+// Returns: '/home/user/dir/file.txt'
+```
+
+## path.isAbsolute(path)
+
+`path.isAbsolute()` 方法检测 `path` 是否为绝对路径。
+
+在 `POSIX` 上:
+
+```js
+path.isAbsolute('/foo/bar')
+// Returns: true
+
+path.isAbsolute('/baz/..')
+// Returns: true
+
+path.isAbsolute('qux/')
+// Returns: false
+
+path.isAbsolute('.')
+// Returns: false
+```
+
+在 `Windows` 上:
+
+```js
+path.isAbsolute('//server')
+// Returns: true
+
+path.isAbsolute('\\\\server')
+// Returns: true
+
+path.isAbsolute('C:/foo/..')
+// Returns: true
+
+path.isAbsolute('C:\\foo\\..')
+// Returns: true
+
+path.isAbsolute('bar\\baz')
+// Returns: false
+
+path.isAbsolute('bar/baz')
+// Returns: false
+
+path.isAbsolute('.')
+// Returns: false
+```
+
+## path.join([...paths])
+
+`path.join()` 方法使用平台特定的分隔符把全部给定的 `path` 片段连接到一起，并规范化生成的路径。
+
+**可以将其类比为 `Array.prototype.join()`，只不过是用于路径。**
+
+拼接符号是平台特定的，`Windows` 上是 `\`，`POSIX` 上是 `/`。
+
+```js
+// 此处的..是指上一级目录
+path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
+// Returns: '/foo/bar/baz/asdf'
+
+path.join('foo', {}, 'bar')
+// Throws 'TypeError: Path must be a string. Received {}'
+```
+
+## path.normalize(path)
+
+`path.normalize()` 方法规范化给定的 `path`，解析 `..` 和 `.` 片段。
+
+当发现多个连续的路径分隔符时（如 `POSIX` 上的 `/`，`Windows` 上的 `\` 或 `\\`），它们会被单个的路径分隔符 `/` 替换。
+
+末尾的多个分隔符会被保留。
+
+```js
+path.normalize('/foo/bar//baz/asdf/quux/..')
+// Returns: '/foo/bar/baz/asdf'
+
+path.normalize('/foo/bar//baz/asdf/quux/.')
+// Returns: '/foo/bar/baz/asdf/quux'
+
+path.normalize('./foo/bar//baz/asdf/quux/..')
+// Returns: 'foo/bar/baz/asdf'
+
+path.normalize('/foo/bar/baz/asdf/quux/')
+// Returns: '/foo/bar/baz/asdf/quux/'
+```
+
+## path.relative(from, to)
+
+`path.relative()` 方法根据当前工作目录返回 `from` 到 `to` 的相对路径。
+
+如果 `from` 和 `to` 各自解析到同一路径（调用 `path.resolve()`），则返回一个长度为零的字符串。
+
+```js
+path.relative('C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb')
+// Returns: '..\\..\\impl\\bbb'
+
+path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
+// Returns: '../../impl/bbb'
+```
+
+## path.resolve([...paths])
+
+`path.resolve()` 方法将路径或路径片段的序列解析为绝对路径。
+
+给定的路径序列**从右到左**进行处理，每个后续的 `path` 前置，**直到构造出一个绝对路径**。
+
+**如果在处理完所有给定的 `path` 片段之后还未生成绝对路径，则再加上当前工作目录**。
+
+生成的路径是规范化后的，且末尾的斜杠会被删除（除非路径被解析为根目录）。
+
+```js
+path.resolve('/foo/bar', './baz')
+// Returns: '/foo/bar/baz'
+
+path.resolve('/foo/bar', '/tmp/file/')
+// Returns: '/tmp/file/'
+
+// 如果当前工作目录是 /home/myself/node
+path.resolve('foo/bar')
+// Returns: '/home/myself/node/foo/bar'
+```
