@@ -1,5 +1,9 @@
 ## Windows vs. POSIX
 
+首先，需要明确的一点是，`Node.js` 是**跨平台**的，它可以运行在 `Windows`、`Linux`、`macOS` 等操作系统上。
+
+也就是说 **`Node.js` 源码会兼容不同的操作系统**。
+
 `Window` 代指我们熟知的 `Windows` 操作系统。
 
 `POSIX` 代指 `Portable Operating System Interface`，即可移植操作系统接口，它是一种标准，定义了操作系统应该为应用程序提供的接口标准。
@@ -32,7 +36,7 @@ path.basename('/temp/myfile.html')
 
 ## path.win32
 
-**当在 `POSIX` 系统上操作 `windows` 格式的文件时，可以利用 `path.win32` 以使用 `windows` 文件规范来解析目标。**
+**当在 `POSIX` 系统上操作 `Windows` 格式的文件时，可以利用 `path.win32` 以使用 `Windows` 文件规范来解析目标。**
 
 `path.win32` 是 `Node.js` 中的 `path` 模块下的一个子模块，它提供了特定于 `Windows` 操作系统的路径处理功能。
 
@@ -43,6 +47,10 @@ path.basename('/temp/myfile.html')
 通过使用 `path.win32` 模块，你可以确保在 `Windows` 操作系统上正确处理和操作文件路径，而不会受到类 `UNIX` 操作系统路径约定的影响。它提供了与 `Windows` 操作系统相关的路径处理功能，使你能够编写跨平台的代码，同时确保与 `Windows` 操作系统的兼容性。
 
 ## path.posix
+
+**当在 `Windows` 系统上操作 `POSIX` 格式的文件时，可以利用 `path.posix` 以使用 `POSIX` 文件规范来解析目标。**
+
+该方式与 `path.win32` 的目的一致。
 
 ## path.basename(path[, suffix])
 
@@ -68,7 +76,7 @@ path.basename('C:\\foo\\bar\\baz\\asdf\\quux.html')
 // Returns: 'C:\foo\bar\baz\asdf\quux.html'
 ```
 
-另外，`windows` 系统中是不区分大小写的，但 `path.basename()` 方法区分大小写。
+另外，`Windows` 系统中是不区分大小写的，但 `path.basename()` 方法区分大小写。
 
 ```js
 path.basename('C:\\temp\\myfile.html')
@@ -79,4 +87,23 @@ path.win32.basename('C:\\temp\\myfile.html', '.html')
 
 path.win32.basename('C:\\temp\\myfile.HTML', '.html')
 // Returns: 'myfile.HTML'
+```
+
+## path.delimiter
+
+`path.delimiter` 属性提供了平台特定的**路径分隔符**。
+
+当访问 `path.delimiter` 时：
+
+- `Windows` 上是 `;`。
+- `POSIX` 上是 `:`。
+
+也可以借助特定 `API` 访问目标平台的路径分隔符：
+
+```js
+path.posix.delimiter
+// Returns: ':'
+
+path.win32.delimiter
+// Returns: ';'
 ```
