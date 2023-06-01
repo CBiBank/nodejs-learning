@@ -52,6 +52,67 @@ path.basename('/temp/myfile.html')
 
 该方式与 `path.win32` 的目的一致。
 
+## path.delimiter
+
+`path.delimiter` 属性提供了平台特定的**路径分隔符**。
+
+当访问 `path.delimiter` 时：
+
+- `Windows` 上是 `;`。
+- `POSIX` 上是 `:`。
+
+在 `POSIX` 上：
+
+```js
+console.log(process.env.PATH)
+// Prints: '/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin'
+
+process.env.PATH.split(path.delimiter)
+// Returns: ['/usr/bin', '/bin', '/usr/sbin', '/sbin', '/usr/local/bin']
+```
+
+在 `Windows` 上:
+
+```js
+console.log(process.env.PATH)
+// Prints: 'C:\Windows\system32;C:\Windows;C:\Program Files\node\'
+
+process.env.PATH.split(path.delimiter)
+// Returns: ['C:\Windows\system32', 'C:\Windows', 'C:\Program Files\node\']
+```
+
+## path.sep
+
+`path.sep` 属性提供了平台特定的**路径片段分隔符**。
+
+当访问 `path.sep` 时：
+
+- `Windows` 上是 `\`。
+- `POSIX` 上是 `/`。
+
+在 `POSIX` 上：
+
+```js
+'foo/bar/baz'.split(path.sep)
+// Returns: ['foo', 'bar', 'baz']
+```
+
+在 `Windows` 上：
+
+```js
+'foo\\bar\\baz'.split(path.sep)
+// Returns: ['foo', 'bar', 'baz']
+```
+
+## path.dirname(path)
+
+`path.dirname` 方法返回一个路径的目录名，类似于 `Unix` 的 `dirname` 命令。
+
+```js
+path.dirname('/foo/bar/baz/asdf/quux')
+// Returns: '/foo/bar/baz/asdf'
+```
+
 ## path.basename(path[, suffix])
 
 `path.basename()` 方法返回路径的最后一部分，类似于 `Unix` 的 `basename` 命令。它会忽略末尾的目录分隔符。
@@ -87,34 +148,6 @@ path.win32.basename('C:\\temp\\myfile.html', '.html')
 
 path.win32.basename('C:\\temp\\myfile.HTML', '.html')
 // Returns: 'myfile.HTML'
-```
-
-## path.delimiter
-
-`path.delimiter` 属性提供了平台特定的**路径分隔符**。
-
-当访问 `path.delimiter` 时：
-
-- `Windows` 上是 `;`。
-- `POSIX` 上是 `:`。
-
-也可以借助特定 `API` 访问目标平台的路径分隔符：
-
-```js
-path.posix.delimiter
-// Returns: ':'
-
-path.win32.delimiter
-// Returns: ';'
-```
-
-## path.dirname(path)
-
-`path.dirname` 方法返回一个路径的目录名，类似于 `Unix` 的 `dirname` 命令。
-
-```js
-path.dirname('/foo/bar/baz/asdf/quux')
-// Returns: '/foo/bar/baz/asdf'
 ```
 
 ## path.extname(path)
@@ -217,23 +250,6 @@ path.isAbsolute('.')
 // Returns: false
 ```
 
-## path.join([...paths])
-
-`path.join()` 方法使用平台特定的分隔符把全部给定的 `path` 片段连接到一起，并规范化生成的路径。
-
-**可以将其类比为 `Array.prototype.join()`，只不过是用于路径。**
-
-拼接符号是平台特定的，`Windows` 上是 `\`，`POSIX` 上是 `/`。
-
-```js
-// 此处的..是指上一级目录
-path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
-// Returns: '/foo/bar/baz/asdf'
-
-path.join('foo', {}, 'bar')
-// Throws 'TypeError: Path must be a string. Received {}'
-```
-
 ## path.normalize(path)
 
 `path.normalize()` 方法规范化给定的 `path`，解析 `..` 和 `.` 片段。
@@ -270,6 +286,23 @@ path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
 // Returns: '../../impl/bbb'
 ```
 
+## path.join([...paths])
+
+`path.join()` 方法使用平台特定的分隔符把全部给定的 `path` 片段连接到一起，并规范化生成的路径。
+
+**可以将其类比为 `Array.prototype.join()`，只不过是用于路径。**
+
+拼接符号是平台特定的，`Windows` 上是 `\`，`POSIX` 上是 `/`。
+
+```js
+// 此处的..是指上一级目录
+path.join('/foo', 'bar', 'baz/asdf', 'quux', '..')
+// Returns: '/foo/bar/baz/asdf'
+
+path.join('foo', {}, 'bar')
+// Throws 'TypeError: Path must be a string. Received {}'
+```
+
 ## path.resolve([...paths])
 
 `path.resolve()` 方法将路径或路径片段的序列解析为绝对路径。
@@ -290,4 +323,21 @@ path.resolve('/foo/bar', '/tmp/file/')
 // 如果当前工作目录是 /home/myself/node
 path.resolve('foo/bar')
 // Returns: '/home/myself/node/foo/bar'
+```
+
+## path.toNamespacedPath(path)
+
+`path.toNamespacedPath()` 方法以平台特定的方式返回路径的等效名称空间路径。
+
+在 `Windows` 操作系统上，文件路径可以包含命名空间前缀，例如 `\\?\` 或 `\\.\`。
+
+这些命名空间前缀可以用于访问一些特殊路径或处理超长路径等情况。
+
+`path.toNamespacedPath()` 方法接受一个路径作为参数，并将其转换为对应的命名空间路径。
+
+**该方法只在 `Windows` 操作系统上有效，对于其他操作系统，调用该方法将返回原始路径，不进行任何转换。**
+
+```js
+path.toNamespacedPath('C:\\temp')
+// Returns: '\\\\?\\C:\\temp'
 ```
