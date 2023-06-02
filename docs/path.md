@@ -85,6 +85,8 @@ process.env.PATH.split(path.delimiter)
 
 `path.sep` 属性提供了平台特定的**路径片段分隔符**。
 
+`sep` 即 `separate`。
+
 当访问 `path.sep` 时：
 
 - `Windows` 上是 `\`。
@@ -115,13 +117,13 @@ path.dirname('/foo/bar/baz/asdf/quux')
 
 ## path.basename(path[, suffix])
 
-`path.basename()` 方法返回路径的最后一部分，类似于 `Unix` 的 `basename` 命令。它会忽略末尾的目录分隔符。
+`path.basename()` 方法返回**路径的最后一部分**，类似于 `Unix` 的 `basename` 命令。它会忽略末尾的目录分隔符。
 
 简单来说，`path.basename()` 方法用于从一个给定的路径中提取文件名或目录名的最后一部分。
 
 它可以用于获取路径中的文件名，而忽略路径的其他部分。
 
-如果路径以目录分隔符结尾（例如 `/path/to/directory/`），`path.basename()` 方法会忽略末尾的目录分隔符，仅返回目录名。
+**如果路径以目录分隔符结尾（例如 `/path/to/directory/`），`path.basename()` 方法会忽略末尾的目录分隔符，仅返回目录名**。
 
 ```js
 path.basename('/foo/bar/baz/asdf/quux.html')
@@ -152,7 +154,7 @@ path.win32.basename('C:\\temp\\myfile.HTML', '.html')
 
 ## path.extname(path)
 
-`path.extname` 方法返回 `path` 的扩展名，从最后一次出现 `.`（句点）字符到 `path` 最后一部分的字符串结束。
+`path.extname` 方法返回 `path` 的**扩展名**，从最后一次出现 `.`（句点）字符到 `path` 最后一部分的字符串结束。
 
 如果在 `path` 的最后一部分中没有 `.`，或者如果 `path` 的基本名称（参阅 `path.basename()`）的第一个字符是 `.`，则返回一个空字符串。
 
@@ -272,23 +274,10 @@ path.normalize('/foo/bar/baz/asdf/quux/')
 // Returns: '/foo/bar/baz/asdf/quux/'
 ```
 
-## path.relative(from, to)
-
-`path.relative()` 方法根据当前工作目录返回 `from` 到 `to` 的相对路径。
-
-如果 `from` 和 `to` 各自解析到同一路径（调用 `path.resolve()`），则返回一个长度为零的字符串。
-
-```js
-path.relative('C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb')
-// Returns: '..\\..\\impl\\bbb'
-
-path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
-// Returns: '../../impl/bbb'
-```
 
 ## path.join([...paths])
 
-`path.join()` 方法使用平台特定的分隔符把全部给定的 `path` 片段连接到一起，并规范化生成的路径。
+`path.join()` 方法使用平台特定的分隔符把全部给定的 `path` 片段连接到一起，并**规范化**生成的路径。
 
 **可以将其类比为 `Array.prototype.join()`，只不过是用于路径。**
 
@@ -305,7 +294,7 @@ path.join('foo', {}, 'bar')
 
 ## path.resolve([...paths])
 
-`path.resolve()` 方法将路径或路径片段的序列解析为绝对路径。
+`path.resolve()` 方法将路径或路径片段的序列**解析为绝对路径**。
 
 给定的路径序列**从右到左**进行处理，每个后续的 `path` 前置，**直到构造出一个绝对路径**。
 
@@ -323,6 +312,20 @@ path.resolve('/foo/bar', '/tmp/file/')
 // 如果当前工作目录是 /home/myself/node
 path.resolve('foo/bar')
 // Returns: '/home/myself/node/foo/bar'
+```
+
+## path.relative(from, to)
+
+`path.relative()` 方法根据当前工作目录返回 `from` 到 `to` 的相对路径。
+
+如果 `from` 和 `to` 各自解析到同一路径（调用 `path.resolve()`），则返回一个长度为零的字符串。
+
+```js
+path.relative('C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb')
+// Returns: '..\\..\\impl\\bbb'
+
+path.relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')
+// Returns: '../../impl/bbb'
 ```
 
 ## path.toNamespacedPath(path)
